@@ -8,7 +8,9 @@ import SwiftUI
 
 internal class SnappingScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDelegate {
     var frames = [CGRect]()
+    
     var contentOffsetSetter: (CGPoint) -> Void = { _ in }
+    var currentPageSetter: (Int) -> Void = { _ in }
     
     private var naturalInset: UIEdgeInsets? = nil
     
@@ -28,6 +30,13 @@ internal class SnappingScrollViewDelegate: NSObject, ObservableObject, UIScrollV
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         contentOffsetSetter(scrollView.contentOffset)
+        
+        if scrollView.contentSize.height > scrollView.bounds.height {
+            currentPageSetter(Int(round(scrollView.contentOffset.y / max(1, scrollView.bounds.height))))
+        }
+        else {
+            currentPageSetter(Int(round(scrollView.contentOffset.x / max(1, scrollView.bounds.width))))
+        }
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView,
