@@ -9,6 +9,7 @@ import SwiftUI
 internal struct UIScrollViewBridge: UIViewRepresentable {
     var decelerationRate: UIScrollView.DecelerationRate
     var delegate: UIScrollViewDelegate
+    @Binding var contentOffset: CGPoint
     
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
@@ -22,6 +23,8 @@ internal struct UIScrollViewBridge: UIViewRepresentable {
             if let scrollView = uiView.parentScrollView() {
                 scrollView.decelerationRate = decelerationRate
                 scrollView.delegate = delegate
+                
+                (delegate as? SnappingScrollViewDelegate)?.contentOffsetSetter = { contentOffset = $0 }
                 
                 //Prevent SwiftUI from reverting deceleration rate
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

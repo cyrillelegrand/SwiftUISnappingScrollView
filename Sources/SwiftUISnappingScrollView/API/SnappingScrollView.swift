@@ -31,7 +31,7 @@ where Content : View
                 .hidden()
             }
             .transformPreference(AnchorsKey.self) { $0 = AnchorsKey.defaultValue }
-            .background(UIScrollViewBridge(decelerationRate: decelerationRate.rate, delegate: delegate))
+            .background(UIScrollViewBridge(decelerationRate: decelerationRate.rate, delegate: delegate, contentOffset: $contentOffset))
         }
         .background(
             GeometryReader { geometry in
@@ -57,6 +57,8 @@ where Content : View
     private var content: () -> Content
     private var decelerationRate: ScrollDecelerationRate
     private var showsIndicators: Bool
+    
+    @Binding private var contentOffset: CGPoint
 }
 
 
@@ -79,11 +81,13 @@ public extension SnappingScrollView {
     init(_ axis: Axis = .vertical,
          decelerationRate: ScrollDecelerationRate = .normal,
          showsIndicators: Bool = true,
+         contentOffset: Binding<CGPoint> = .constant(.zero),
          @ViewBuilder content: @escaping () -> Content)
     {
         self.axis = axis
         self.content = content
         self.decelerationRate = decelerationRate
         self.showsIndicators = showsIndicators
+        self._contentOffset = contentOffset
     }
 }

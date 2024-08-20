@@ -8,6 +8,7 @@ import SwiftUI
 
 internal class SnappingScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDelegate {
     var frames = [CGRect]()
+    var contentOffsetSetter: (CGPoint) -> Void = { _ in }
     
     private var naturalInset: UIEdgeInsets? = nil
     
@@ -23,6 +24,10 @@ internal class SnappingScrollViewDelegate: NSObject, ObservableObject, UIScrollV
         if naturalInset == nil {
             scrollViewDidChangeAdjustedContentInset(scrollView)
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        contentOffsetSetter(scrollView.contentOffset)
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView,
